@@ -1,4 +1,10 @@
-# Paul Dash
+#           _          _       
+#        __| |____ ___| |__    
+#       / _  |__  / __| '_ \           Script: 'ADMembership.ps1'
+#      | (_| |(_| \__ \ | | |          Author: Paul 'Dash'
+#       \__,_\__,_|___/_| |_(_)        E-mail: paul@dash.training
+#       T  R  A  I  N  I  N  G 
+
 # November 2024
 
 # Shows how "OLD" API can still be used to access device information in EntraID
