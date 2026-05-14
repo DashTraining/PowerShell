@@ -95,7 +95,7 @@ if ($ComputerName -eq 'LON-DC1') {
 } elseif ($ComputerName -like "*DC?") {
     'Some other DC, but not  the London ONE'
 } elseif ($ComputerName -like "*CL?" -or $ComputerName -like "*CL??") {
-    'The client'
+    'A client'
 } else {
     'Unknown computer'
 }
