@@ -14,6 +14,6 @@ Please use with caution. Read and understand the code before you execute!
 
 ### Copyright
 
-Copyright 2019-2026 Paul Dash (Paul Wojcicki-Jarocki)
+© 2019-2026 Paul Dash (Paul Wojcicki-Jarocki)
 
 Permission is hereby granted to any person to access, use, copy, and modify the content published herein for private and educational purposes only. For commercial use, please contact the author. THIS CONTENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
