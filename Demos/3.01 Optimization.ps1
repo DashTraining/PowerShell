@@ -1,7 +1,7 @@
 ﻿#Requires -Version 5
 
 #
-#        _| _ __|_           Script:  '3.01 Optimization.ps1' 
+#        _| _ __|_           Script:  '3.01 Optimization.ps1'
 #       (_|(_|_)| ) .        Author:  Paul 'Dash'
 #      t r a i n i n g       Contact: paul@dash.training
 #                            Created: 2016-12-04
@@ -32,7 +32,7 @@ TALKING POINTS - Before trying to optimize, ask yourself:
 Clear-Host
 (Measure-Command {
 
-1..10000 | ForEach-Object { Write-Output $_ }
+1..100000 | ForEach-Object { Write-Output $_ }
 
 }).TotalMilliseconds
 
@@ -42,6 +42,11 @@ foreach ($number in (1..10000)) { Write-Output $number }
 
 }).TotalMilliseconds
 
+(Measure-Command {
+
+(1..10000).ForEach({Write-Output $_})
+
+}).TotalMilliseconds
 
 
 ######################################## Cmdlet Parameters
@@ -106,29 +111,29 @@ $size = 10000
 
 (Measure-Command {
     $array = @()
-    for ($i = 0; $i -lt $size; $i++) { 
+    for ($i = 0; $i -lt $size; $i++) {
         $array += $i
     }
 }).TotalMilliseconds
 
 (Measure-Command {
     $array = New-Object Int32[] $size
-    for ($i = 0; $i -lt $size; $i++) { 
+    for ($i = 0; $i -lt $size; $i++) {
         $array[$i] = $i
     }
 }).TotalMilliseconds
 
 (Measure-Command {
     $array = New-Object System.Collections.ArrayList
-    for ($i = 0; $i -lt $size; $i++) { 
+    for ($i = 0; $i -lt $size; $i++) {
         $array.Add($i)
     }
 }).TotalMilliseconds
 
 (Measure-Command {
     $array = [System.Collections.Generic.List[Int32]]::new()
-    for ($i = 0; $i -lt $size; $i++) { 
-        $array.Add($i) 
+    for ($i = 0; $i -lt $size; $i++) {
+        $array.Add($i)
     }
 }).TotalMilliseconds
 
