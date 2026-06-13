@@ -5,12 +5,12 @@
 #       \__,_\__,_|___/_| |_(_)
 #       T  R  A  I  N  I  N  G
 
-#          Script: 'New-X509v3Certificate.ps1'
+# Script:          New-X509v3Certificate.ps1
 
-# Original author: Adam Conkle - Microsoft Corporation
-# Original source: http://social.technet.microsoft.com/wiki/contents/articles/4714.how-to-generate-a-self-signed-certificate-using-powershell.aspx
+# Originally by:   Adam Conkle - Microsoft Corporation
+# Originally at:   http://social.technet.microsoft.com/wiki/contents/articles/4714.how-to-generate-a-self-signed-certificate-using-powershell.aspx
 
-# Adopted by:      Paul Wojcicki-Jarocki - Paul Dash (paul@pauldash.com)
+# Adopted by:      Paul Wojcicki-Jarocki - Paul Dash (paul@dash.training)
 # Adopted because: * added more options for intended usage (EKU) and Subject fields
 #                  * commented throughout
 #                  * change to more secure sha256
@@ -22,6 +22,10 @@
 
 
 Write-Host    "This script will generate a self-signed certificates with an exportable private key.`n"
+
+# Dangerous things about to happen
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
 
 $ContextAnswer = Read-Host "Store certificate in the User or Computer store? [U/C]"
 if ($ContextAnswer -eq "U") {
@@ -38,15 +42,16 @@ if ($ContextAnswer -eq "U") {
 }
 
 # Set certificate Subject name based on user input
-$SubjectCN = Read-Host "Subject name of the certificate "
-$SubjectE  = Read-Host "Subject E-mail address          "
-
-# Dangerous things about to happen ;)
-$ErrorActionPreference = 'Stop'
+$SubjectCN = Read-Host "Subject name of the certificate                "
 
 if (Get-ChildItem "Cert:\$CertStoreLocation\My\" | Where-Object {$_.Subject -like "*CN=$Subject*"}) {
     Write-Warning "Other certificates for that subject exist."
+    ### TODO: prompt for friendly name to add to the certificate and check for existing friendly names as well
 }
+
+$SubjectE  = Read-Host "Subject E-mail address (or [Return] for empty) "
+### TODO: prompt for more Subject fields (O, OU, L, S, C)
+### TODO: prompt for SANs (Subject Alternative Names)
 
 $DistinguishedName = New-Object -ComObject "X509Enrollment.CX500DistinguishedName.1"
 if ($SubjectE) {
@@ -55,11 +60,16 @@ if ($SubjectE) {
     $DistinguishedName.Encode("CN=$SubjectCN", 0)
 }
 
+
+# PRIVATE KEY
+
 # Generate private key
 $key = New-Object -ComObject 'X509Enrollment.CX509PrivateKey.1'
 $key.ProviderName = 'Microsoft RSA SChannel Cryptographic Provider'
 #$key.ProviderName = 'Microsoft Base Smart Card Crypto Provider' # from CryptoAPI
 #$key.ProviderName = 'Microsoft Smart Card Key Storage Provider' # from CNG
+### TODO: list existing providers and prompt for selection
+
 $key.KeySpec = 1 # for other purposes: 3
 $key.Length = 2048
 $key.SecurityDescriptor = "D:PAI(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0x80120089;;;NS)"
@@ -67,63 +77,67 @@ $key.MachineContext = $machineContext
 $key.ExportPolicy = 1 # 0 for non-exportable Private Key
 $key.Create()
 
-# Create OID for intended usage
+
+## ENHANCED KEY USAGE (EKU) EXTENSION
+
+# Create OID list for intended usage and prompt the user for EKU selections.
 ### TODO: check out the .NET type System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension
-$codesigningoid = New-Object -ComObject 'X509Enrollment.CObjectId.1'
-### TODO: put this in a SWITCH
-$codesigningoid.InitializeFromValue("1.3.6.1.5.5.7.3.3")        # Code Signing
-#$codesigningoid.InitializeFromValue("1.3.6.1.5.5.7.3.1")       # Server Authentication
-#$codesigningoid.InitializeFromValue("1.3.6.1.5.5.7.3.2")       # Client Authentication
-#$codesigningoid.InitializeFromValue("1.3.6.1.5.5.7.3.4")       # Secure Email
-#$codesigningoid.InitializeFromValue("1.3.6.1.5.5.7.3.8")       # Time Stamping
-#$codesigningoid.InitializeFromValue("1.3.6.1.4.1.311.10.3.12") # Document Signing
+$ekuOptions = [ordered]@{
+    '1' = @{ Label = 'Code Signing';          Oid = '1.3.6.1.5.5.7.3.3' }
+    '2' = @{ Label = 'Server Authentication'; Oid = '1.3.6.1.5.5.7.3.1' }
+    '3' = @{ Label = 'Client Authentication'; Oid = '1.3.6.1.5.5.7.3.2' }
+    '4' = @{ Label = 'Secure Email';          Oid = '1.3.6.1.5.5.7.3.4' }
+    '5' = @{ Label = 'Time Stamping';         Oid = '1.3.6.1.5.5.7.3.8' }
+    '6' = @{ Label = 'Document Signing';      Oid = '1.3.6.1.4.1.311.10.3.12' }
+    '7' = @{ Label = 'Any Purpose';           Oid = '2.5.29.37.0' }
+}
 
-# Add OID to list
-$ekuoids = New-Object -ComObject "X509Enrollment.CObjectIds.1"
-$ekuoids.Add($codesigningoid)
+function Add-EkuOid {
+    param([string]$Oid)
+    if (-not ($ekuoids | Where-Object { $_.Value -eq $Oid })) {
+        $ekuoids.Add((New-Object -ComObject 'X509Enrollment.CObjectId.1').InitializeFromValue($Oid)) | Out-Null
+        Write-Host "Added EKU: $Oid"
+    } else {
+        Write-Host "EKU already selected: $Oid"
+    }
+}
 
+$ekuoids = New-Object -ComObject 'X509Enrollment.CObjectIds.1'
 
-##################
-<#
-# Add OID to list
-$ekuoids = New-Object -ComObject "X509Enrollment.CObjectIds.1"
+Write-Host 'Select one or more Enhanced Key Usages for this certificate. Choose D when done.'
+foreach ($key in $ekuOptions.Keys) {
+    $option = $ekuOptions[$key]
+    Write-Host " [$key] $($option.Label) - $($option.Oid)"
+}
+Write-Host ' [D] Done'
 
-@'
-1. Code Signing
-2. Server Authentication
-3. Client Authentication
-4. Secure Email
-5. Time Stamping
-6. Document Signing
-'@
-$ExitSelectingOID = $false
-do {
-    $ekuOID = New-Object -ComObject "X509Enrollment.CObjectId.1"
-
-    switch (Read-Host -Prompt 'Type choice of Enhanced Key Usage or [D]one')
-    {
-        '1' { $ekuOID.InitializeFromValue("1.3.6.1.5.5.7.3.3") }
-        '2' { $ekuOID.InitializeFromValue("1.3.6.1.5.5.7.3.1") }
-        '3' { $ekuOID.InitializeFromValue("1.3.6.1.5.5.7.3.2") }
-        '4' { $ekuOID.InitializeFromValue("1.3.6.1.5.5.7.3.4") }
-        '5' { $ekuOID.InitializeFromValue("1.3.6.1.5.5.7.3.8") }
-        '6' { $ekuOID.InitializeFromValue("1.3.6.1.4.1.311.10.3.12") }
-        'D' { $ExitSelectingOID = $true }
-        Default { Write-Warning 'Unsupported key usage!' }
+$selectedEKUs = $false
+while ($true) {
+    $choice = (Read-Host -Prompt 'Choose an EKU number or [D]one').ToUpper()
+    if ($choice -eq 'D') {
+        break
     }
 
-    if ($ekuOID.Value -and ($ekuOID -notin $ekuoids)) {
-        $ekuoids.Add($ekuOID)
+    if ($ekuOptions.ContainsKey($choice)) {
+        Add-EkuOid -Oid $ekuOptions[$choice].Oid
+        $selectedEKUs = $true
+        continue
     }
 
-} until ($ExitSelectingOID)
-#>
+    Write-Warning 'Unsupported selection. Choose 1-7 or D.'
+}
 
-
+if (-not $selectedEKUs) {
+    Write-Warning 'No EKU selected. Defaulting to Code Signing.'
+    Add-EkuOid -Oid $ekuOptions['1'].Oid
+}
 
 # Add list of OIDs to extensions
 $ekuext = New-Object -ComObject 'X509Enrollment.CX509ExtensionEnhancedKeyUsage.1'
 $ekuext.InitializeEncode($ekuoids)
+
+
+## CREATE CERTIFICATE REQUEST
 
 # Create certificate request
 $CertReq = New-Object -ComObject 'X509Enrollment.CX509CertificateRequestCertificate.1'
@@ -153,6 +167,9 @@ $Enrollment.InitializeFromRequest($CertReq)
 $CertBASE64 = $Enrollment.CreateRequest(0)
 
 Write-Host "Certificate creation: $($Enrollment.Status.ErrorText)" -ForegroundColor Green
+
+
+# INSTALL
 
 # Install certificate in store
 # https://docs.microsoft.com/en-us/windows/win32/api/certenroll/nf-certenroll-ix509enrollment-installresponse
