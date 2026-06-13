@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+#           _          _
+#        __| |____ ___| |__
+#       / _  |__  / __| '_ \           Script: '3.02 Custom Format.format.ps1xml'
+#      | (_| |(_| \__ \ | | |          Author: Paul 'Dash'
+#       \__,_\__,_|___/_| |_(_)        E-mail: paul@dash.training
+#       T  R  A  I  N  I  N  G
+#
+# Custom object formatting using a .format.ps1xml file.
+# Associated with Custom PSProvider demo.
+#
+# Reference:
+# https://docs.microsoft.com/en-us/powershell/developer/format/writing-a-powershell-formatting-file
+-->
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>Dash.Training.NetworkProtocol</Name>
+      <ViewSelectedBy>
+        <TypeName>Dash.Training.NetworkProtocol</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>12</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>PortCount</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Protocol</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>PortCount</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Dash.Training.NetworkPort</Name>
+      <ViewSelectedBy>
+        <TypeName>Dash.Training.NetworkPort</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Protocol</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Port</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Bindings</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>State</Label>
+            <Width>16</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Process</Label>
+            <Width>30</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Protocol</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Port</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>BindingCount</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  if ([string]::IsNullOrWhiteSpace($_.StateSummary)) { return $_.StateSummary }
+                  $stateMap = @{
+                    '1'  = 'Closed'
+                    '2'  = 'Listen'
+                    '3'  = 'SynSent'
+                    '4'  = 'SynReceived'
+                    '5'  = 'Established'
+                    '6'  = 'FinWait1'
+                    '7'  = 'FinWait2'
+                    '8'  = 'CloseWait'
+                    '9'  = 'Closing'
+                    '10' = 'LastAck'
+                    '11' = 'TimeWait'
+                    '12' = 'DeleteTcb'
+                    '100' = 'Bound'
+                  }
+                  ($_.StateSummary -split ',\s*' | ForEach-Object {
+                    if ($stateMap.ContainsKey($_)) { $stateMap[$_] } else { $_ }
+                  }) -join ', '
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ProcessSummary</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+    <View>
+      <Name>Dash.Training.NetworkSocket</Name>
+      <ViewSelectedBy>
+        <TypeName>Dash.Training.NetworkSocket</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>6</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>LocalAddress</Label>
+            <Width>24</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>RemoteAddress</Label>
+            <Width>24</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>RemotePort</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>State</Label>
+            <Width>16</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>ProcessName</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>PID</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>LocalAddress</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>RemoteAddress</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  if ($null -eq $_.RemotePort) { '' } else { $_.RemotePort }
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>
+                  $stateMap = @{
+                    '1'  = 'Closed'
+                    '2'  = 'Listen'
+                    '3'  = 'SynSent'
+                    '4'  = 'SynReceived'
+                    '5'  = 'Established'
+                    '6'  = 'FinWait1'
+                    '7'  = 'FinWait2'
+                    '8'  = 'CloseWait'
+                    '9'  = 'Closing'
+                    '10' = 'LastAck'
+                    '11' = 'TimeWait'
+                    '12' = 'DeleteTcb'
+                    '100' = 'Bound'
+                  }
+                  if ($stateMap.ContainsKey([string]$_.State)) { $stateMap[[string]$_.State] } else { $_.State }
+                </ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ProcessName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>OwningProcess</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
