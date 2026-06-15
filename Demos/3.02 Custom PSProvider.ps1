@@ -9,9 +9,11 @@
 # Associated with Custom Format demo.
 
 
-# Reference:
+# Resources:
 # https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/developer/provider/windows-powershell-provider-overview.md
-#
+# https://learn.microsoft.com/en-us/powershell/scripting/developer/provider/windows-powershell-provider-quickstart?view=powershell-7.6
+# https://4sysops.com/archives/create-a-custom-powershell-provider/
+
 
 # CLEANUP
 
