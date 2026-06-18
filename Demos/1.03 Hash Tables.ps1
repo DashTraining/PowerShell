@@ -81,7 +81,7 @@ Get-CimInstance @serviceParams |
 
 # 6. A more complex hashtable
 # Hash tables can contain more than just scalar values, like arrays and nested hash tables.
-$profile = @{
+$shellProfile = @{
     Name        = 'Paul'
     Skills      = 'PowerShell', 'WPF', 'Regex'
     Preferences = @{
@@ -91,8 +91,8 @@ $profile = @{
     }
 }
 
-$profile
-$profile.Preferences
+$shellProfile
+$shellProfile.Preferences
 
 
 # 7. Safer key checks
@@ -114,8 +114,8 @@ $settings.GetEnumerator() |
 
 # 9. Serialization
 # ConvertTo-Json is a practical way to serialize nested hashtable data.
-$profile
-$profile | ConvertTo-Json -Depth 3
+$shellProfile
+$shellProfile | ConvertTo-Json -Depth 3
 
 
 # 10. Generic dictionaries
