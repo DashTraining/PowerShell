@@ -79,3 +79,15 @@ $AuthHead = @{'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (
              }
 
 $ForecastResult = Invoke-RestMethod -Headers $AuthHead -Uri $LocationForecastURI
+
+#################################################
+# Check weather at InPost parcel point
+
+# 1. find a parcel point that supports air quality monitoring
+# 2. use Edge DevTools to inspect network requests and find ID and name
+# 3. make a POST request to the air_index_level endpoint
+
+$InPostWeather = Invoke-RestMethod -Uri https://inpost.pl/shipx-point-data/41011/KRA305M/air_index_level -Headers @{"X-Requested-With"='XMLHttpRequest'} -Method Post
+$InPostWeather.air_sensors
+
+# 4. strings include label : value : percentage
