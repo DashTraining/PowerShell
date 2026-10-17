@@ -118,17 +118,9 @@ if ($principal.IsInRole("Administrators")) {
 }
 
 Clear-Host
-if ($host.Name -eq 'ConsoleHost') {
-    Write-Host -ForegroundColor DarkGray @'
-
-  :::::::-.    :::.     .::::::.   ::   .:
-   ;;,   `';,  ;;`;;   ;;;`    `  ,;;   ;;,
-   `[[     [[ ,[[ '[[, '[==/[[[[,,[[[,,,[[[
-    $$,    $$c$$$cc$$$c  '''    $"$$$"""$$$
-    888_,o8P' 88A   8U8,88L    dP 888   "88o   d8b
-    MMMMP"`   YMM   ""`  "YMmMY"  MMM    YMM   YMP
-
-
-'@
+$artFile = Join-Path -Path $PSScriptRoot -ChildPath 'ASCII.psd1'
+if ($host.Name -eq 'ConsoleHost' -and (Test-Path -Path $artFile)) {
+    $artwork = Get-Random -InputObject (Import-PowerShellDataFile -Path $artFile).Artworks
+    Write-Host -ForegroundColor DarkGray "`n$($artwork.Art)`n`n"
 }
 Write-Host -BackgroundColor DarkGray -ForegroundColor White ("    session launched at $(Get-Date -Format t)").PadRight((Get-Host).UI.RawUI.WindowSize.Width)
