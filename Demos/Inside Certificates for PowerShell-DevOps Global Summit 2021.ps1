@@ -8,6 +8,8 @@
 
 # created for the PowerShell + DevOps Global Summit 2021
 # session entitled Inside Certificates
+# TODO: Split this conference runbook into focused, independently runnable labs with explicit Windows/admin prerequisites and deterministic fixtures.
+# TODO: Replace personal drives/domains and guard certificate-store, WSMan, firewall, IIS, Azure, and module-install changes with ShouldProcess plus cleanup/rollback instructions.
 
 break # Don't run top-to-bottom!
 

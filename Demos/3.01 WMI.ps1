@@ -6,6 +6,8 @@
 
 
 # More advanced WMI / CIM examples with classes that are slow, surprising, or awkward.
+# TODO: Mark Windows PowerShell-only WMI commands clearly and lead with CIM equivalents for PowerShell 7 learners.
+# TODO: Put event subscriptions and session resources behind try/finally cleanup so partial execution and Ctrl+C leave no registrations behind.
 
 
 ### 1. Software inventory: avoid Win32_Product

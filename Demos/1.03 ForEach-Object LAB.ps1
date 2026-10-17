@@ -1,4 +1,5 @@
 ﻿# 1. Run this line to save a value to a variable.
+# TODO: Create exercise folders under a dedicated temporary path and include cleanup so reruns do not depend on or modify the learner's current directory.
 $ComputerName = 'localhost'
 
 # 2. Use Get-Member to inspect the System.String object that is now in the variable.

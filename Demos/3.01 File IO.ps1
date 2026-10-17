@@ -6,6 +6,7 @@
 #       T  R  A  I  N  I  N  G
 
 # File and folder input/output examples, including dialogs, metadata inspection, and streaming I/O
+# TODO: Run all writes inside a dedicated temporary lesson folder and clean it up; avoid reading and overwriting the same file in one pipeline.
 
 
 ## Basics

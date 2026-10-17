@@ -7,6 +7,8 @@
 
 
 # DateTime creation, conversion, formatting and edge-case examples.
+# TODO: Keep intentionally incomplete syntax as a comment/string or separate exercise; incomplete code must not prevent the entire file from parsing.
+# TODO: Save and restore CurrentCulture around the culture comparison so the lesson does not change the learner's remaining session.
 
 # Current date/time
 Get-Date

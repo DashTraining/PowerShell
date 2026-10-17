@@ -7,6 +7,8 @@
 
 
 
+# TODO: Label this as Windows PowerShell 5.1-only legacy content and provide a current PowerShell 7 comparison using ForEach-Object -Parallel or thread jobs.
+# TODO: Add setup/cleanup for suspended workflow jobs so the demo is repeatable and does not leave jobs behind.
 # PARALLELISM
 #################################################
 workflow ParallelDemo {

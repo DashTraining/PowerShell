@@ -12,6 +12,8 @@
 - scriptblock scope
 #>
 
+# TODO: Add a deterministic local substitute for the remoting section and make the required pre-existing global variable part of explicit setup/cleanup.
+
 # This demo expects a variable to already exist in the global scope.
 if (-not (Get-Variable -Name GreetingText -Scope Global -ErrorAction SilentlyContinue)) {
     Write-Warning 'This demo expects $Greeting already exists. Set it and rerun the script.'

@@ -10,6 +10,7 @@
 
 # To be used in advanced courses like the MOC 55039 or custom classes.
 # Makes sense only in combination with my ServiceTools module.
+# TODO: Replace the T:\ SMB repository and AllUsers installs with an isolated per-user/temp lab, add prerequisite checks, and provide rollback after each publishing stage.
 break # STOP RUNNING
 
 

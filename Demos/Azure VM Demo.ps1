@@ -6,6 +6,8 @@
 #       T  R  A  I  N  I  N  G
 
 
+# TODO: Split provisioning, inspection, modification, and cleanup into independently runnable sections with prerequisite checks, current SKUs/images, estimated cost, and confirmation before billable changes.
+# TODO: Remove tenant-specific networking names and ensure cleanup tracks every resource group created by both VM examples.
 Install-Module Az
 
 # Connect to Azure Tenant

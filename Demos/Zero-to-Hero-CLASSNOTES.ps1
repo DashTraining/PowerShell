@@ -8,6 +8,8 @@
 
 # CLASS NOTES
 # from my "Zero to Hero" 1-day training
+# TODO: Turn the monolithic instructor runbook into timed, independently runnable chapters with setup, expected output, exercises, and reset steps.
+# TODO: Replace C:/S:/T:/X:, live remoting, and legacy WMI/EventLog assumptions with portable fixtures or clearly labelled optional Windows labs.
 
 break # so whole thing won't run if you press F5 on this file!
 

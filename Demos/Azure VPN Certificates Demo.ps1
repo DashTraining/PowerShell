@@ -5,6 +5,8 @@
 #       \__,_\__,_|___/_| |_(_)        E-mail: paul@dash.training
 #       T  R  A  I  N  I  N  G
 
+# TODO: Fix the "$DriveLetter:" interpolation parse error by delimiting the variable, replace ConvertTo-Base64 with a self-contained supported conversion, and parameterize the output path.
+# TODO: Explain and clean up the certificates/private keys created by the lesson; do not leave exportable keys in the learner's personal store without an explicit choice.
 # Creates a self-signed root certificate for signing client certificates
 $cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
                                   -Subject "CN=VPN-CA" `

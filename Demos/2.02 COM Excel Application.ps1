@@ -8,6 +8,7 @@
 
 # Demonstration of using complex COM interaction.
 # Runs the Excel application (must be installed) and enters some data into spreadsheet.
+# TODO: Parameterize the T:\ output path and wrap Excel workbook/application COM objects in try/finally cleanup so failed or interrupted demos do not leave Excel running.
 # Documentation:
 # https://docs.microsoft.com/en-us/office/vba/api/overview/excel/object-model
 

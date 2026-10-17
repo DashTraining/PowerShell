@@ -8,6 +8,7 @@
 # Simple HTML report examples
 # Shows four complexity levels of HTML generation using ConvertTo-Html and inline styling.
 
+# TODO: Default report output to a temporary or $PSScriptRoot-based folder and show the generated path so every learner can run the example unchanged.
 # Edit this for your environment
 $ReportLocation = 'T:\'
 

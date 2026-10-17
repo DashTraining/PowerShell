@@ -7,6 +7,7 @@
 # Created   2011-12-17 in Hjelmeland, Norway
 # Modified  2022-12-01 with new prompt function
 #           2024-02-01 version check around PredictionSource
+# TODO: Separate portable profile ideas from machine-specific PSDrive paths, aliases, host colors, and Windows elevation checks; guard each optional feature independently.
 
 
 # Turn off command prediction

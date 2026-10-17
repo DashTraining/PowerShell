@@ -7,6 +7,7 @@
 #                            Created: 2016-12-04
 #
 
+# TODO: Split benchmarks into short, independently runnable comparisons with warm-up, repeated measurements, result validation, and guidance on interpreting noisy timings.
 break
 <#
 TALKING POINTS - Before trying to optimize, ask yourself:

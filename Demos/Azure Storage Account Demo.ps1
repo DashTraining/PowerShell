@@ -6,6 +6,7 @@
 #       T  R  A  I  N  I  N  G
 
 
+# TODO: Add parameters and prerequisite/login checks, generate a globally unique storage name, replace the personal photo path with sample data, and finish with opt-in cleanup/cost guidance.
 # Create a SA
 New-AzStorageAccount -ResourceGroupName $RGName `
                      -Location $Loc `

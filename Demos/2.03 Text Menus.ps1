@@ -10,6 +10,8 @@
 # Simple text-based menu
 #################################################
 
+# TODO: Separate menu rendering from command execution, initialize/read the choice before dispatch, and return from the demo instead of exiting the learner's host.
+# TODO: Add a fallback for hosts without RawUI and use deterministic sample data where live services/volumes are not the lesson objective.
 # Doesn't work in ISE because of lack of implementation of ReadKey method
 # so please run this in the Console Host or Terminal
 if ($Host.Name.Contains('ISE')) { Exit }
