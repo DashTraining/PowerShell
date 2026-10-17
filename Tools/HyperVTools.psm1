@@ -7,6 +7,7 @@
 
 # Module 'HyperVTools'
 # associated with manifest 'HyperVTools.psd1'
+# TODO: Add an isolated Hyper-V lab walkthrough and Pester coverage before presenting recovery as a teaching example; include failure injection and rollback for partial VM repair.
 
 
 # .SYNOPSIS

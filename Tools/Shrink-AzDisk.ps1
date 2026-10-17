@@ -1,4 +1,6 @@
 [CmdletBinding()]
+# TODO: Convert the configuration block to validated parameters and add SupportsShouldProcess plus an explicit backup/recovery checkpoint before replacing or deleting any disk.
+# TODO: Add bounded copy/startup waits, try/finally revocation and cleanup, post-copy integrity checks, current Az prerequisites, cost warnings, and a disposable test scenario.
 param() {
 	$ExistingDiskID         = "/subscriptions/{ID}/resourceGroups/DASH-Demo-rg/providers/Microsoft.Compute/disks/DASH-Demo-vm_disk1"
 

@@ -11,6 +11,7 @@
 # Processes file with user names to produce User / Group pairs based on AD group membership.
 # .NOTES
 # Script for a friend.
+# TODO: Add a sample input/output walkthrough or mocked AD fixture, validate Path as a file, reset per-user state before each lookup, and correct progress to report 0-100 percent.
 
 Param (
     # Path to user list with a sAMAccountName or DistinguishedName or SID on each line.

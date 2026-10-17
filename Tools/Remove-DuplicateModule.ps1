@@ -10,6 +10,8 @@
 # and leaves only the latest version.
 
 # Run as a cleanup task after using Update-Module!
+# TODO: Add SupportsShouldProcess, distinguish side-by-side copies across module paths/scopes, and report uninstall failures rather than hiding them behind verbose output.
+# TODO: Provide a dry-run example with a disposable module fixture so this is safe to teach and verify.
 
 [cmdletbinding()]
 param(

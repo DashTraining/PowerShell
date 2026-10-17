@@ -9,6 +9,8 @@
 
 # Shows how "OLD" API can still be used to access device information in EntraID
 # with regular user permissions, without providing any admin consent
+# TODO: Replace the legacy Azure AD Graph/ADAL flow with a current Microsoft Graph example, parameterize TenantId, and document the exact delegated permission/consent behavior.
+# TODO: Add paging, API-error handling, and a small sanitized sample response so learners can understand the transformation without tenant access.
 
 [cmdletBinding()]
 param()

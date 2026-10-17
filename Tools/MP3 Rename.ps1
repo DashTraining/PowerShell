@@ -19,6 +19,8 @@ function Rename-MP3Duplicate {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
 
+    # TODO: Filter/validate the duplicate-name pattern before Substring; an ordinary MP3 without " (" currently produces an invalid index.
+    # TODO: Use exact target/action text for ShouldProcess, handle destination-name collisions, and release the Shell COM object after metadata reads.
     # Step 1: Get all .mp3 files in current directory
     dir -Filter '*.mp3' |
     # Extract the core name (part before " (") and preserve file size

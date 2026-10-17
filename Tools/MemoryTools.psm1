@@ -77,6 +77,8 @@ function Measure-MemoryUsage {
         $code = $ScriptBlock
     }
 
+    # TODO: Monitor the process that actually runs the workload; the current nested Start-Job samples the outer job process rather than the child workload process.
+    # TODO: Validate PollingInterval, preserve workload errors/output separately, and test short-lived, failing, and cancelled workloads.
     # Start a background job for isolation and monitoring
     $job = Start-Job -ScriptBlock {
         param([ScriptBlock]$CodeToRun, [int]$IntervalMs)

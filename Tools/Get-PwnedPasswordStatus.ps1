@@ -12,6 +12,8 @@ Uses the "Have I Been Pwned" API to check if a password has been exposed in a da
 Documented here: https://haveibeenpwned.com/API/v3?ref=troyhunt.com#SearchingPwnedPasswordsByRange
 Does NOT expose any data outside of the local system.
 #>
+# TODO: Make the script self-contained instead of relying on Unprotect-SecureString, clear plaintext/hash material in finally, and handle API/network failures explicitly.
+# TODO: Return a structured result or use Write-Host for colors; Write-Output does not accept ForegroundColor or BackgroundColor.
 [cmdletBinding()]
 param(
     # Password to be checked
