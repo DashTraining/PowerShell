@@ -1,9 +1,9 @@
-﻿#           _          _       
-#        __| |____ ___| |__    
+﻿#           _          _
+#        __| |____ ___| |__
 #       / _  |__  / __| '_ \           Script: 'ADMembership.ps1'
 #      | (_| |(_| \__ \ | | |          Author: Paul 'Dash'
 #       \__,_\__,_|___/_| |_(_)        E-mail: paul@dash.training
-#       T  R  A  I  N  I  N  G 
+#       T  R  A  I  N  I  N  G
 
 #Requires -Modules ActiveDirectory
 
@@ -11,7 +11,10 @@
 # Processes file with user names to produce User / Group pairs based on AD group membership.
 # .NOTES
 # Script for a friend.
-# TODO: Add a sample input/output walkthrough or mocked AD fixture, validate Path as a file, reset per-user state before each lookup, and correct progress to report 0-100 percent.
+# .INPUTS
+# String containing path to file. File should contain a list of user names.
+# .OUTPUTS
+# PSObject with two properties: User, Group. Multiple occurances of User are allowed and expected.
 
 Param (
     # Path to user list with a sAMAccountName or DistinguishedName or SID on each line.
@@ -21,11 +24,17 @@ Param (
     $Path
 )
 
+# Validate input
+if (-not (Test-Path $Path -PathType Leaf)) {
+    Write-Error "Could not open file '$Path'. Exiting."
+    exit
+}
+
 # Read file in first so we know how many users to process
 $Users = Get-Content -Path $Path
 $Current = 0
 
-# Loop through the user list 
+# Loop through the user list
 foreach ($SingleUser in $Users) {
 
     Write-Progress -Activity 'Getting group membership' -CurrentOperation $SingleUser -PercentComplete ($Current / $Users.Count)
@@ -47,7 +56,7 @@ foreach ($SingleUser in $Users) {
         } catch {
             Write-Warning "Couldn't get group membership for '$SingleUser'."
         }
-               
+
         # Loop through result to create User / Group pair for output
         foreach ($SingleGroup in $Groups) {
             New-Object -TypeName PSObject -Property @{User=$SingleUser;Group=$SingleGroup.Name}
@@ -55,5 +64,7 @@ foreach ($SingleUser in $Users) {
 
         # Cleanup before next loop iteration
         $SingleDN = $null
+        $Groups = $null
     }
+    $SingleUser = $null
 }
