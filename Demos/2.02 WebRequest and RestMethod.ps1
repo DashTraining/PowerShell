@@ -3,82 +3,98 @@
 #       (_|(_|_)| ) .        Author:  Paul 'Dash'
 #      t r a i n i n g       Contact: paul@dash.training
 #                            Created: 2016-03-23
-#                            Mod on:  2020-02-11 : new yr.no API
+#                            Mod on:  2026-10-19 : replace retired APIs
 #
 
 
 #################################################
 # HTML
 # Getting a simple web page
-Invoke-WebRequest -Uri 'https://www.glasspaper.no' -Verbose
-
-
-
-#################################################
-# XML
-# Getting the weather data
-
-$PostalCode = '5961' # 2061 Gardermoen
-
-# TODO: update from the old APIs
-# http://om.yr.no/verdata/xml/
-$yrURI = "http://www.yr.no/sted/Norge/postnummer/$PostalCode/varsel.xml"
-
-$yrnoData = Invoke-WebRequest $yrURI
-
-# Save the result of the web request as XML object
-$WeatherResult = ([XML]$yrnoData.Content).weatherdata
-# Choose forecast for the near future
-$Forecast = $WeatherResult.forecast.tabular.time | Select-Object -First 1
-$Forecast |
-Select-Object @{N='Temp'; E={ [string]($_.temperature.value) + ' °C' }},
-              @{N='Wind'; E={ if ($_.windSpeed) { ($_.windDirection.code) + ' ' + ($_.windSpeed.mps) + ' mps' }
-                              else { 'no data' } }},
-              @{N='Pres'; E={ $_.pressure.value }}
-
-
-
-# Run this hidden ;)
-#region Extremes
-$ExtremeData = Invoke-RestMethod -Uri 'https://api.met.no/weatherapi/extremeswwc/1.3/'
-$ExtremeData.weatherdata.product.time.lowestTemperatures.location |
-Select-Object Name, @{Name='Temp';Expression={$_.lowestTemperature.value}} |
-Sort-Object -Property Temp |
-Select-Object -Last 1 |
-ForEach-Object {Write-Host "Which is not as bad as $($_.Temp) degrees in $($_.Name)!"}
-#endregion
-
-# MET.no has now changed this API and the information there requires an account:
-# https://frost.met.no/api.html#!/records/getRecords
+$HtmlResult = Invoke-WebRequest -Uri 'https://glasspaper.no' -TimeoutSec 20 -Verbose
+$HtmlResult.Content
 
 
 #################################################
-# JSON
-# Validating the postal code
+# JSON response
+# Validating Norwegian postal codes
+# documented here: https://developer.bring.com/api/postal-code/
 
+# use 2061 for Gardermoen
 $PostalCode = '1415'
 
-# https://developer.bring.com/api/postal-code/
-$BringURI = 'https://api.bring.com/shippingguide/api/postalCode.json?clientUrl=dash.training&country=no&pnr='
+# URI, including the escaped postal code
+$BringURI = "https://api.bring.com/shippingguide/api/postalCode.json?clientUrl=dash.training&country=no&pnr={0}" -f [uri]::EscapeDataString($PostalCode)
 
 # METHOD 1: get the HTML, look at the content, convert to JSON
-$BringData = Invoke-WebRequest ($BringURI + $PostalCode)
+$BringData = Invoke-WebRequest -Uri $BringURI -TimeoutSec 20
 $PostalCodeResult = $BringData.Content | ConvertFrom-Json
-
-# METHOD 2: get the result of a REST API
-$PostalCodeResult = Invoke-RestMethod ($BringURI + $PostalCode)
+Write-Host 'METHOD 1: Invoke-WebRequest'
+$PostalCodeResult
 
 # If the result is valid, print out its city
 if ($PostalCodeResult.valid) {
     Write-Host -F Black -B Gray "Postal code $PostalCode is valid for $($PostalCodeResult.result)."
 }
+else {
+    throw "Postal code $PostalCode was not valid."
+}
+
+# METHOD 2: get the result of a REST API
+$PostalCodeResult = Invoke-RestMethod -Uri $BringURI -TimeoutSec 20
+Write-Host 'METHOD 2: Invoke-RestMethod'
+$PostalCodeResult
+
+# If the result is valid, print out its city
+if ($PostalCodeResult.valid) {
+    Write-Host -F Black -B Gray "Postal code $PostalCode is valid for $($PostalCodeResult.result)."
+}
+else {
+    throw "Postal code $PostalCode was not valid."
+}
 
 
-$LocationForecastURI = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=59.90&lon=10.75'
-$AuthHead = @{'User-Agent' = 'Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10136';
-             }
+#################################################
+# XML response
+# World Bank API - Get information about a country
 
-$ForecastResult = Invoke-RestMethod -Headers $AuthHead -Uri $LocationForecastURI
+$CountryCode = 'NOR'
+
+$WorldBankURI = "https://api.worldbank.org/v2/country/{0}?format=xml" -f $CountryCode
+$CountryResult = Invoke-WebRequest -Uri $WorldBankURI -TimeoutSec 20
+$CountryResult.Content
+
+$xml = [xml]$CountryResult.Content
+$CountryInfo = $xml.countries.country | Select-Object -First 1
+
+[pscustomobject]@{ Name = $CountryInfo.name; Capital = $CountryInfo.capitalCity; Coordinates = '{0}, {1}' -f $CountryInfo.latitude, $CountryInfo.longitude }
+
+
+#################################################
+# Another API
+# This time requiring a User-Agent header
+
+# Use 59.91 for latitude and 10.75 for longitude for Oslo
+$Latitude = 59.91
+$Longitude = 10.75
+
+# Weather forecast for Oslo (latitude 59.91, longitude 10.75)
+$LocationForecastURI = "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={0}&lon={1}" -f $Latitude, $Longitude
+
+$UserAgent = 'PowerShellTeachingDemo/1.0 (+https://github.com/DashTraining/PowerShell)'
+
+$ForecastResult = Invoke-RestMethod -UserAgent $UserAgent -Uri $LocationForecastURI -TimeoutSec 20
+if (-not $ForecastResult.properties.timeseries) {
+    throw 'Unexpected response (the API may have changed).'
+}
+
+$now = $ForecastResult.properties.timeseries[0]
+[pscustomobject]@{
+    Time = $now.time
+    Temp = '{0} °C' -f $now.data.instant.details.air_temperature
+    Wind = '{0} m/s from {1}°' -f $now.data.instant.details.wind_speed, $now.data.instant.details.wind_from_direction
+    Pres = $now.data.instant.details.air_pressure_at_sea_level
+}
+
 
 #################################################
 # Check weather at InPost parcel point
