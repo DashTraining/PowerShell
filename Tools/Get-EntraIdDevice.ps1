@@ -1,26 +1,26 @@
-#           _          _       
-#        __| |____ ___| |__    
+#           _          _
+#        __| |____ ___| |__
 #       / _  |__  / __| '_ \           Script: 'ADMembership.ps1'
 #      | (_| |(_| \__ \ | | |          Author: Paul 'Dash'
 #       \__,_\__,_|___/_| |_(_)        E-mail: paul@dash.training
-#       T  R  A  I  N  I  N  G 
+#       T  R  A  I  N  I  N  G
 
 # November 2024
 
 # Shows how "OLD" API can still be used to access device information in EntraID
 # with regular user permissions, without providing any admin consent
-# TODO: Replace the legacy Azure AD Graph/ADAL flow with a current Microsoft Graph example, parameterize TenantId, and document the exact delegated permission/consent behavior.
 # TODO: Add paging, API-error handling, and a small sanitized sample response so learners can understand the transformation without tenant access.
 
 [cmdletBinding()]
-param()
+param(
+    # Azure AD (now Entra ID) tenant identifier.
+    [string]$TenantId
+)
 
 # Install the ADAL PowerShell module if not already installed
 # Uncomment the line below if you need to install the module
 # Install-Module -Name AzureAD.Standard.Preview -Force
 
-# Variables: Replace with your Azure AD tenant and API details
-$TenantId    = 'f2864f9c-ee3d-4275-8137-960b00ab231f'
 $apiVersion  = "1.6"                        # Azure AD Graph API version
 $resource    = "https://graph.windows.net"  # Azure AD Graph API resource
 
